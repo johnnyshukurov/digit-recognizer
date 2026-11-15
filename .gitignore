@@ -1,0 +1,24 @@
+﻿# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Build and packaging
+build/
+dist/
+*.egg-info/
+
+# Local data and trained model
+data/mnist.npz
+model.npz
+
+# Editor and OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
