@@ -56,25 +56,6 @@ def train(net, x, y, x_val, y_val, epochs, lr, batch_size, seed=0):
             raise SystemExit("loss стал nan/inf: learning rate слишком большой. Попробуй --lr 0.05")
         print(f"{epoch:5d} | {tl:10.4f} {ta:9.4f} | {vl:8.4f} {va:8.4f} | {time.time() - t0:4.1f} c")
 
-
-def report(net, x_digits, y_digits, x_unknown):
-    """Итоговый отчёт на тестовых данных, которых сеть не видела."""
-    p_digits = probabilities(net, x_digits)
-    acc = float((p_digits.argmax(axis=1) == y_digits).mean())
-    print(f"Test, цифры: верно {acc:.4f}")
-
-    labels = decide(p_digits)                           # ответ с порогом уверенности
-    accepted = labels != UNKNOWN
-    print(f"  с порогом уверенности {MIN_CONFIDENCE}: ответила «не знаю» на {1 - accepted.mean():.4f} цифр, "
-          f"из принятых верно {float((labels == y_digits)[accepted].mean()):.4f}")
-
-    if len(x_unknown):
-        rejected = float((decide(probabilities(net, x_unknown)) == UNKNOWN).mean())
-        print(f"Test, «не цифры» (сгенерированные буквы/каракули): узнано как «не цифра» {rejected:.4f}")
-        print("  (это оптимистичная оценка: картинки сделаны тем же генератором, что и при обучении;\n"
-              "   настоящая проверка: нарисуй свои буквы в окошке)")
-
-
 def positive_int(s):
     v = int(s)
     if v < 1:
@@ -130,10 +111,9 @@ def main():
     train(net, x_train, y_train, x_val_all, y_val_all, args.epochs, args.lr, args.batch_size)
 
     print()
-    report(net, x_test, y_test, x_test_unknown)
+   
     if evaluate(net, x_test, y_test)[1] < 0.5:
-        print("\nВНИМАНИЕ: сеть почти не обучилась. Обычно помогает меньший --lr (например, 0.05) "
-              "или больше --epochs.")
+        print("\nВНИМАНИЕ: сеть почти не обучилась.")
     net.save()
     print(f"\nМодель сохранена: {MODEL_PATH}")
 
